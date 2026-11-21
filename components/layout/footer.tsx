@@ -12,6 +12,8 @@ import {
   Loader2,
   CheckCircle2,
   ArrowUpRight,
+  Mail,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -92,25 +94,25 @@ export function Footer() {
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Newsletter Club Banner */}
-        <div className="relative overflow-hidden rounded-3xl border border-border/70 bg-card p-8 sm:p-12 mb-16 shadow-lg shadow-black/5">
+        <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-border/70 bg-card p-5 sm:p-8 lg:p-12 mb-16 shadow-lg shadow-black/5">
           <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
           <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
 
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-7 space-y-3">
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
+            <div className="lg:col-span-7 space-y-2.5 sm:space-y-3">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs font-bold tracking-wide uppercase">
                 <Flame className="h-3.5 w-3.5 animate-pulse text-primary" />
                 The Artisanal Sourdough Club
               </div>
-              <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+              <h3 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-foreground">
                 Fresh From The Stone Oven
               </h3>
-              <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-xl">
+              <p className="text-xs sm:text-sm lg:text-base text-muted-foreground leading-relaxed max-w-xl">
                 Get first access to secret weekend pizza drops, seasonal heirloom sourdough releases, and neighborhood chef collaborations. No spam, only hot pies.
               </p>
             </div>
 
-            <div className="lg:col-span-5">
+            <div className="lg:col-span-5 w-full">
               {subscribed ? (
                 <div className="flex items-center gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-emerald-700 dark:text-emerald-400">
                   <CheckCircle2 className="h-5 w-5 shrink-0" />
@@ -119,21 +121,24 @@ export function Footer() {
                   </div>
                 </div>
               ) : (
-                <form onSubmit={handleSubscribe} className="space-y-2.5">
-                  <div className="flex flex-col sm:flex-row gap-2">
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Enter your email for oven drops..."
-                      required
-                      className="h-11 flex-1 rounded-xl border border-border bg-background px-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all shadow-xs"
-                      aria-label="Email address for newsletter"
-                    />
+                <form onSubmit={handleSubscribe} className="space-y-2.5 w-full">
+                  <div className="flex flex-col sm:flex-row items-stretch gap-2.5 sm:gap-2">
+                    <div className="relative flex-1">
+                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Enter your email for oven drops..."
+                        required
+                        className="w-full h-11 pl-10 pr-4 rounded-xl border border-border/80 bg-background/95 dark:bg-muted/40 text-sm text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all shadow-xs"
+                        aria-label="Email address for newsletter"
+                      />
+                    </div>
                     <Button
                       type="submit"
                       disabled={isSubmitting}
-                      className="h-11 px-6 rounded-xl font-bold gap-2 shrink-0 shadow-sm"
+                      className="h-11 px-6 rounded-xl font-bold gap-2 shrink-0 shadow-sm cursor-pointer"
                     >
                       {isSubmitting ? (
                         <>
@@ -148,8 +153,9 @@ export function Footer() {
                       )}
                     </Button>
                   </div>
-                  <p className="text-[11px] text-muted-foreground pl-1">
-                    Free sourdough tasting perks. Unsubscribe anytime with 1-click.
+                  <p className="text-[11px] sm:text-xs text-muted-foreground pl-0.5 flex items-center gap-1.5">
+                    <Sparkles className="h-3 w-3 text-primary shrink-0" />
+                    <span>Free sourdough tasting perks. Unsubscribe anytime with 1-click.</span>
                   </p>
                 </form>
               )}
