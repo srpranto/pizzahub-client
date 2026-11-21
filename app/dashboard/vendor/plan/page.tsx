@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Check, X, Sparkles, ShieldCheck, Flame, RefreshCw, AlertCircle } from "lucide-react";
+import { Check, X, Sparkles, ShieldCheck, Flame, RefreshCw, AlertCircle, CreditCard } from "lucide-react";
 import { toast } from "sonner";
 import { UpgradeBtn } from "@/components/dashboard/upgrade-btn";
 import { Badge } from "@/components/ui/badge";
@@ -210,6 +210,31 @@ export default function VendorPlanPage() {
             )}
           </CardFooter>
         </Card>
+      </div>
+
+      {/* Stripe Evaluation Notice & Test Card Details */}
+      <div className="rounded-2xl border border-border/80 bg-muted/40 p-5 space-y-3">
+        <div className="flex items-center gap-2 font-bold text-sm text-foreground">
+          <CreditCard className="h-4 w-4 text-primary" />
+          <span>Evaluation &amp; Stripe Test Environment</span>
+        </div>
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          For evaluation testing, the vendor tier upgrade is connected to the Stripe test environment. Use the standard Stripe test card details below or click the upgrade button above to verify immediate account expansion.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+          <div className="rounded-xl border border-border/60 bg-background/80 p-3 text-xs">
+            <span className="text-muted-foreground block text-[10px] uppercase font-bold tracking-wider">Test Card Number</span>
+            <code className="font-mono font-bold text-foreground mt-0.5 block">4242 •••• •••• 4242</code>
+          </div>
+          <div className="rounded-xl border border-border/60 bg-background/80 p-3 text-xs">
+            <span className="text-muted-foreground block text-[10px] uppercase font-bold tracking-wider">Expiration Date</span>
+            <code className="font-mono font-bold text-foreground mt-0.5 block">Any Future Date (e.g. 12/28)</code>
+          </div>
+          <div className="rounded-xl border border-border/60 bg-background/80 p-3 text-xs">
+            <span className="text-muted-foreground block text-[10px] uppercase font-bold tracking-wider">CVC &amp; Postal</span>
+            <code className="font-mono font-bold text-foreground mt-0.5 block">123 / Any 5 Digits</code>
+          </div>
+        </div>
       </div>
     </div>
   );
