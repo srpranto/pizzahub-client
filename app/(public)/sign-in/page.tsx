@@ -26,16 +26,35 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { ROLE_DASHBOARD_ROUTES } from "@/lib/constants";
+import { resolveAuthRedirect } from "@/lib/constants";
 import { GradientText } from "@/components/motion-brew/gradient-text";
 import { AnnotationText } from "@/components/motion-brew/annotation-text";
 import { ShimmerText } from "@/components/motion-brew/shimmer-text";
-import type { User } from "@/types";
+import type { User, UserRole } from "@/types";
 
 export default function SignInPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
+  const roleParam = searchParams.get("role");
+
+  const { data: session, isPending } = authClient.useSession();
+
+  React.useEffect(() => {
+    if (!isPending && session?.user) {
+      const role = ((session.user as unknown as User)?.role as UserRole) || "customer";
+      const target = resolveAuthRedirect(callbackUrl, role);
+      router.replace(target);
+    }
+  }, [session, isPending, callbackUrl, router]);
+
+  const signUpHref = React.useMemo(() => {
+    const params = new URLSearchParams();
+    if (callbackUrl) params.set("callbackUrl", callbackUrl);
+    if (roleParam) params.set("role", roleParam);
+    const qs = params.toString();
+    return qs ? `/sign-up?${qs}` : "/sign-up";
+  }, [callbackUrl, roleParam]);
 
   const [showPassword, setShowPassword] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -65,19 +84,8 @@ export default function SignInPage() {
       clearTokenCache();
       toast.success("Welcome back!");
 
-      const isSafeCallback =
-        callbackUrl &&
-        callbackUrl.startsWith("/") &&
-        !callbackUrl.startsWith("//");
-
-      if (isSafeCallback) {
-        router.push(callbackUrl);
-        router.refresh();
-        return;
-      }
-
-      const role = (res.data?.user as unknown as User)?.role || "customer";
-      const target = ROLE_DASHBOARD_ROUTES[role] || "/dashboard";
+      const role = ((res.data?.user as unknown as User)?.role as UserRole) || "customer";
+      const target = resolveAuthRedirect(callbackUrl, role);
       router.push(target);
       router.refresh();
     } catch {
@@ -92,7 +100,7 @@ export default function SignInPage() {
       setGoogleLoading(true);
       const targetCallback = callbackUrl
         ? `/auth/oauth-callback?callbackUrl=${encodeURIComponent(callbackUrl)}`
-        : "/auth/oauth-callback";
+        : "/auth/oauth-callback?callbackUrl=%2F";
       await authClient.signIn.social({
         provider: "google",
         callbackURL: targetCallback,
@@ -253,7 +261,7 @@ export default function SignInPage() {
           <p className="text-sm text-muted-foreground">
             Don&apos;t have an account?{" "}
             <Link
-              href="/sign-up"
+              href={signUpHref}
               className="font-semibold text-primary hover:underline"
             >
               Sign Up

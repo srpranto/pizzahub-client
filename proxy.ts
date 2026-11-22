@@ -23,7 +23,8 @@ export default function proxy(request: NextRequest): NextResponse {
 
   if (!sessionCookie?.value) {
     const signInUrl = new URL("/sign-in", request.url);
-    signInUrl.searchParams.set("callbackUrl", pathname);
+    const fullTarget = pathname + (request.nextUrl.search || "");
+    signInUrl.searchParams.set("callbackUrl", fullTarget);
     return NextResponse.redirect(signInUrl);
   }
 

@@ -11,12 +11,12 @@ export function FloatingCart() {
   return (
     <aside
       aria-label="Shopping Cart Summary"
-      className="fixed bottom-6 right-6 z-40 animate-in fade-in slide-in-from-bottom-4 duration-300 ease-out"
+      className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 animate-in fade-in slide-in-from-bottom-4 duration-300 ease-out"
     >
       <button
         type="button"
         onClick={openCart}
-        className="group flex items-center gap-3 rounded-full bg-primary px-5 py-3 text-primary-foreground shadow-xl ring-2 ring-primary/20 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
+        className="group flex items-center gap-2.5 sm:gap-3 rounded-full bg-primary px-3.5 py-2.5 sm:px-5 sm:py-3 text-primary-foreground shadow-xl ring-2 ring-primary/20 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
         aria-label={`View your pizza box with ${itemCount} items`}
       >
         <div className="relative flex h-7 w-7 items-center justify-center rounded-full bg-primary-foreground/20">

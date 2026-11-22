@@ -2,14 +2,18 @@
 
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Pizza, Menu as MenuIcon, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { ThemeBtn } from "@/components/common/theme-btn";
+import { LogoutBtn } from "@/components/common/logout-btn";
 import { NavUser } from "./nav-user";
 import { useSession } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { CartTrigger } from "@/components/cart/cart-trigger";
+import { ROLE_DASHBOARD_ROUTES } from "@/lib/constants";
 import type { UserRole } from "@/types";
 
 export function Nav() {
@@ -32,6 +36,11 @@ export function Nav() {
   } else if (session && role === "admin") {
     navLinks.push({ label: "Admin Panel", href: "/dashboard/admin" });
   }
+
+  const authQuery =
+    pathname && pathname !== "/" && pathname !== "/sign-in" && pathname !== "/sign-up"
+      ? `?callbackUrl=${encodeURIComponent(pathname)}`
+      : "";
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur-md">
@@ -84,10 +93,10 @@ export function Nav() {
           ) : (
             <div className="flex items-center gap-2">
               <Button variant="ghost" asChild size="sm">
-                <Link href="/sign-in">Sign In</Link>
+                <Link href={`/sign-in${authQuery}`}>Sign In</Link>
               </Button>
               <Button asChild size="sm">
-                <Link href="/sign-up">Sign Up</Link>
+                <Link href={`/sign-up${authQuery}`}>Sign Up</Link>
               </Button>
             </div>
           )}
@@ -135,27 +144,59 @@ export function Nav() {
           </nav>
           <div className="pt-3 border-t border-border">
             {user ? (
-              <div className="flex items-center justify-between py-2">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary font-semibold text-primary-foreground text-xs shadow-xs">
-                    {(user.name ?? "U").slice(0, 2).toUpperCase()}
+              <div className="space-y-3 py-2">
+                <div className="flex items-center gap-3 px-1">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary font-bold text-primary-foreground text-xs shadow-xs overflow-hidden">
+                    {user.image ? (
+                      <Image
+                        src={user.image}
+                        alt={user.name || "User"}
+                        width={40}
+                        height={40}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      ((user.name ?? "U")
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")
+                        .toUpperCase()
+                        .slice(0, 2) || "U")
+                    )}
                   </div>
-                  <div className="text-sm">
-                    <p className="font-semibold text-foreground">{user.name}</p>
-                    <p className="text-xs text-muted-foreground">{user.email}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-foreground text-sm truncate">{user.name}</p>
+                    <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                   </div>
+                  <Badge variant="outline" className="text-[10px] capitalize px-2 py-0.5 shrink-0">
+                    {role}
+                  </Badge>
                 </div>
-                <NavUser user={user} />
+                <div className="grid grid-cols-2 gap-2 pt-1">
+                  <Button variant="outline" size="sm" asChild className="h-9 rounded-xl text-xs font-semibold">
+                    <Link
+                      href={ROLE_DASHBOARD_ROUTES[role] || "/dashboard"}
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
+                  </Button>
+                  <LogoutBtn
+                    size="sm"
+                    variant="ghost"
+                    className="h-9 rounded-xl text-xs text-destructive hover:bg-destructive/10 justify-center"
+                  />
+                </div>
               </div>
             ) : (
               <div className="flex flex-col gap-2.5 pt-2">
                 <Button variant="outline" asChild className="w-full min-h-[48px] rounded-xl font-medium">
-                  <Link href="/sign-in" onClick={() => setMobileOpen(false)}>
+                  <Link href={`/sign-in${authQuery}`} onClick={() => setMobileOpen(false)}>
                     Sign In
                   </Link>
                 </Button>
                 <Button asChild className="w-full min-h-[48px] rounded-xl font-bold shadow-md shadow-primary/20">
-                  <Link href="/sign-up" onClick={() => setMobileOpen(false)}>
+                  <Link href={`/sign-up${authQuery}`} onClick={() => setMobileOpen(false)}>
                     Sign Up
                   </Link>
                 </Button>

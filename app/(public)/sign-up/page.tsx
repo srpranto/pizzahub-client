@@ -25,15 +25,34 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { ROLE_DASHBOARD_ROUTES } from "@/lib/constants";
+import { resolveAuthRedirect } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { GradientText } from "@/components/motion-brew/gradient-text";
 import { AnnotationText } from "@/components/motion-brew/annotation-text";
+import type { UserRole } from "@/types";
 
 export default function SignUpPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
   const initialRole = searchParams.get("role") === "vendor" ? "vendor" : "customer";
+
+  const { data: session, isPending } = authClient.useSession();
+
+  React.useEffect(() => {
+    if (!isPending && session?.user) {
+      const role = ((session.user as { role?: UserRole })?.role) || "customer";
+      const target = resolveAuthRedirect(callbackUrl, role);
+      router.replace(target);
+    }
+  }, [session, isPending, callbackUrl, router]);
+
+  const signInHref = React.useMemo(() => {
+    const params = new URLSearchParams();
+    if (callbackUrl) params.set("callbackUrl", callbackUrl);
+    const qs = params.toString();
+    return qs ? `/sign-in?${qs}` : "/sign-in";
+  }, [callbackUrl]);
 
   const [showPassword, setShowPassword] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -69,7 +88,7 @@ export default function SignUpPage() {
       }
 
       toast.success("Account created successfully!");
-      const target = ROLE_DASHBOARD_ROUTES[values.role] || "/dashboard";
+      const target = resolveAuthRedirect(callbackUrl, values.role);
       router.push(target);
       router.refresh();
     } catch {
@@ -83,9 +102,12 @@ export default function SignUpPage() {
     try {
       setGoogleLoading(true);
       document.cookie = `pizzahub_oauth_role=${selectedRole}; path=/; max-age=600; SameSite=Lax`;
+      const targetCallback = callbackUrl
+        ? `/auth/oauth-callback?callbackUrl=${encodeURIComponent(callbackUrl)}`
+        : "/auth/oauth-callback?callbackUrl=%2F";
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/auth/oauth-callback",
+        callbackURL: targetCallback,
       });
     } catch {
       toast.error("Failed to initialize Google authentication");
@@ -378,7 +400,7 @@ export default function SignUpPage() {
           <p className="text-sm text-muted-foreground">
             Already have an account?{" "}
             <Link
-              href="/sign-in"
+              href={signInHref}
               className="font-semibold text-primary hover:underline"
             >
               Sign In

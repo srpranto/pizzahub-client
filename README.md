@@ -1,5 +1,7 @@
 # PizzaHub Client
 
+> **Live Application**: [https://pizzahub-client-shahil.vercel.app](https://pizzahub-client-shahil.vercel.app)
+
 PizzaHub is an online pizza marketplace where independent kitchens can showcase their artisanal pies, manage incoming orders, and grow their food business, while customers can discover nearby stone-baked pizzas, customize delivery schedules, and track their meals from the oven to their door.
 
 This repository contains the frontend application, built with Next.js 16, React 19, and Tailwind CSS. It communicates with a standalone Express backend to handle menu browsing, user authentication, customer orders, vendor kitchen dashboards, and administrator moderation.

@@ -69,10 +69,10 @@ export function MenuFilters() {
   );
 
   return (
-    <div className="space-y-4 rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-xs w-full max-w-full min-w-0 overflow-hidden">
-      <div className="flex items-center justify-between border-b border-border pb-3">
-        <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-          <SlidersHorizontal className="h-4 w-4 text-primary" />
+    <div className="space-y-3 sm:space-y-4 rounded-xl sm:rounded-2xl border border-border bg-card p-3 sm:p-5 shadow-xs w-full max-w-full min-w-0 overflow-hidden">
+      <div className="flex items-center justify-between border-b border-border pb-2.5 sm:pb-3">
+        <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold text-foreground">
+          <SlidersHorizontal className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
           <span>Filters &amp; Search</span>
         </div>
         {hasActiveFilters && (
@@ -80,37 +80,37 @@ export function MenuFilters() {
             variant="ghost"
             size="sm"
             onClick={handleReset}
-            className="h-8 px-2 text-xs text-muted-foreground hover:text-foreground active:scale-[0.98]"
+            className="h-7 sm:h-8 px-2 text-[11px] sm:text-xs text-muted-foreground hover:text-foreground active:scale-[0.98]"
           >
-            <RotateCcw className="mr-1 h-3.5 w-3.5" />
+            <RotateCcw className="mr-1 h-3 w-3 sm:h-3.5 sm:w-3.5" />
             Reset All
           </Button>
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 w-full min-w-0">
-        <form onSubmit={handleSearchSubmit} className="relative w-full min-w-0">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 w-full min-w-0">
+        <form onSubmit={handleSearchSubmit} className="relative col-span-2 sm:col-span-1 w-full min-w-0">
           <Input
             placeholder="Search pizza name..."
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            className="pr-10 h-11 rounded-xl text-base sm:text-sm w-full"
+            className="pr-9 h-9 sm:h-11 rounded-lg sm:rounded-xl text-xs sm:text-sm w-full"
           />
           <button
             type="submit"
-            className="absolute right-1.5 top-1.5 flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+            className="absolute right-1 top-1 sm:right-1.5 sm:top-1.5 flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-md sm:rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
             aria-label="Search"
           >
-            <Search className="h-4 w-4" />
+            <Search className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </button>
         </form>
 
-        <div className="w-full min-w-0">
+        <div className="col-span-1 w-full min-w-0">
           <Select
             value={currentCategory}
             onValueChange={(val) => updateParam("category", val)}
           >
-            <SelectTrigger className="h-11 rounded-xl text-base sm:text-sm w-full">
+            <SelectTrigger className="h-9 sm:h-11 rounded-lg sm:rounded-xl text-xs sm:text-sm w-full">
               <SelectValue placeholder="All Categories" />
             </SelectTrigger>
             <SelectContent>
@@ -124,28 +124,12 @@ export function MenuFilters() {
           </Select>
         </div>
 
-        <form onSubmit={handleLocationSubmit} className="relative w-full min-w-0">
-          <Input
-            placeholder="Filter by city / area..."
-            value={locationValue}
-            onChange={(e) => setLocationValue(e.target.value)}
-            className="pr-10 h-11 rounded-xl text-base sm:text-sm w-full"
-          />
-          <button
-            type="submit"
-            className="absolute right-1.5 top-1.5 flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
-            aria-label="Filter by location"
-          >
-            <Search className="h-4 w-4" />
-          </button>
-        </form>
-
-        <div className="w-full min-w-0">
+        <div className="col-span-1 w-full min-w-0">
           <Select
             value={currentSort}
             onValueChange={(val) => updateParam("sort", val)}
           >
-            <SelectTrigger className="h-11 rounded-xl text-base sm:text-sm w-full">
+            <SelectTrigger className="h-9 sm:h-11 rounded-lg sm:rounded-xl text-xs sm:text-sm w-full">
               <SelectValue placeholder="Sort By" />
             </SelectTrigger>
             <SelectContent>
@@ -155,10 +139,26 @@ export function MenuFilters() {
             </SelectContent>
           </Select>
         </div>
+
+        <form onSubmit={handleLocationSubmit} className="relative col-span-2 sm:col-span-1 w-full min-w-0">
+          <Input
+            placeholder="Filter by city / area..."
+            value={locationValue}
+            onChange={(e) => setLocationValue(e.target.value)}
+            className="pr-9 h-9 sm:h-11 rounded-lg sm:rounded-xl text-xs sm:text-sm w-full"
+          />
+          <button
+            type="submit"
+            className="absolute right-1 top-1 sm:right-1.5 sm:top-1.5 flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-md sm:rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+            aria-label="Filter by location"
+          >
+            <Search className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          </button>
+        </form>
       </div>
 
       {/* Quick-tap category pills */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 text-xs w-full max-w-full scrollbar-none touch-pan-x min-w-0">
+      <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 pt-0.5 text-xs w-full max-w-full scrollbar-none touch-pan-x min-w-0">
         {["All", ...CATEGORIES].map((cat) => {
           const isSelected = currentCategory === cat;
           return (
@@ -166,7 +166,7 @@ export function MenuFilters() {
               key={cat}
               type="button"
               onClick={() => updateParam("category", cat)}
-              className={`min-h-[38px] px-3.5 py-1.5 inline-flex items-center justify-center shrink-0 rounded-full font-semibold transition-all cursor-pointer border active:scale-[0.97] whitespace-nowrap ${
+              className={`min-h-[30px] sm:min-h-[38px] px-2.5 sm:px-3.5 py-1 sm:py-1.5 text-[11px] sm:text-xs inline-flex items-center justify-center shrink-0 rounded-full font-semibold transition-all cursor-pointer border active:scale-[0.97] whitespace-nowrap ${
                 isSelected
                   ? "bg-primary text-primary-foreground border-primary shadow-xs"
                   : "bg-background border-border text-muted-foreground hover:text-foreground hover:bg-muted/70"

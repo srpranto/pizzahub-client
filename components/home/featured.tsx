@@ -13,32 +13,32 @@ export function Featured({ items }: FeaturedProps) {
   const displayItems = items.length >= 6 ? items.slice(0, 6) : items;
 
   return (
-    <section suppressHydrationWarning className="py-16 sm:py-24">
-      <div suppressHydrationWarning className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
+    <section suppressHydrationWarning className="py-10 sm:py-24">
+      <div suppressHydrationWarning className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-12 gap-3 sm:gap-4">
           <div>
             <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-primary mb-1">
               <Sparkles className="h-3.5 w-3.5" />
               <span>Handpicked From Vetted Kitchens</span>
             </div>
-            <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-foreground">
               Featured Artisanal Pies
             </h2>
-            <p className="mt-2 text-sm text-muted-foreground max-w-xl [text-wrap:pretty]">
+            <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-muted-foreground max-w-xl [text-wrap:pretty]">
               Stone-fired pizzas baked by independent neighborhood pizzerias. Slow 48-hour fermented sourdough, San Marzano tomato sauce, and fresh mozzarella delivered hot to your door.
             </p>
           </div>
 
-          <Button variant="outline" asChild className="w-fit group">
+          <Button variant="outline" asChild size="sm" className="w-fit group h-9 sm:h-10 text-xs sm:text-sm">
             <Link href="/menu">
               Explore All Stone-Baked Pies
-              <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+              <ArrowRight className="ml-1.5 sm:ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4 transition-transform duration-200 group-hover:translate-x-1" />
             </Link>
           </Button>
         </div>
 
         {displayItems.length > 0 ? (
-          <div suppressHydrationWarning className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div suppressHydrationWarning className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-6">
             {displayItems.map((item) => (
               <MenuCard key={item.id} item={item} />
             ))}
