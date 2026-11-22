@@ -40,10 +40,16 @@ export default function SignInPage() {
 
   const { data: session, isPending } = authClient.useSession();
 
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [googleLoading, setGoogleLoading] = React.useState(false);
+  const [isRedirecting, setIsRedirecting] = React.useState(false);
+
   React.useEffect(() => {
     if (!isPending && session?.user) {
       const role = ((session.user as unknown as User)?.role as UserRole) || "customer";
       const target = resolveAuthRedirect(callbackUrl, role);
+      setIsRedirecting(true);
       router.replace(target);
     }
   }, [session, isPending, callbackUrl, router]);
@@ -55,10 +61,6 @@ export default function SignInPage() {
     const qs = params.toString();
     return qs ? `/sign-up?${qs}` : "/sign-up";
   }, [callbackUrl, roleParam]);
-
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
-  const [googleLoading, setGoogleLoading] = React.useState(false);
 
   const form = useForm<SignInInput>({
     resolver: zodResolver(signInSchema),
@@ -78,6 +80,7 @@ export default function SignInPage() {
 
       if (res.error) {
         toast.error(res.error.message || "Failed to sign in. Please verify your credentials.");
+        setLoading(false);
         return;
       }
 
@@ -86,18 +89,22 @@ export default function SignInPage() {
 
       const role = ((res.data?.user as unknown as User)?.role as UserRole) || "customer";
       const target = resolveAuthRedirect(callbackUrl, role);
-      router.push(target);
-      router.refresh();
+      setIsRedirecting(true);
+      React.startTransition(() => {
+        router.push(target);
+        router.refresh();
+      });
     } catch {
       toast.error("An unexpected error occurred during sign in");
-    } finally {
       setLoading(false);
+      setIsRedirecting(false);
     }
   };
 
   const handleGoogleSignIn = async () => {
     try {
       setGoogleLoading(true);
+      setIsRedirecting(true);
       const targetCallback = callbackUrl
         ? `/auth/oauth-callback?callbackUrl=${encodeURIComponent(callbackUrl)}`
         : "/auth/oauth-callback?callbackUrl=%2F";
@@ -108,13 +115,39 @@ export default function SignInPage() {
     } catch {
       toast.error("Failed to initialize Google authentication");
       setGoogleLoading(false);
+      setIsRedirecting(false);
     }
   };
+
+  const isTargetingPizza = Boolean(callbackUrl && callbackUrl.startsWith("/menu/"));
 
   return (
     <div className="relative flex min-h-[calc(100vh-8rem)] items-center justify-center px-4 py-12 sm:px-6 lg:px-8 ambient-glow overflow-hidden">
       <div className="w-full max-w-md">
-        <Card className="w-full shadow-xl border-border/80 bg-card/95 backdrop-blur-sm rounded-3xl">
+        <Card className="relative overflow-hidden w-full shadow-xl border-border/80 bg-card/95 backdrop-blur-sm rounded-3xl">
+          {/* Artisanal Loading & Verification Overlay */}
+          {isRedirecting && (
+            <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-card/95 backdrop-blur-md p-6 text-center animate-in fade-in duration-300">
+              <div className="relative mb-5 flex h-20 w-20 items-center justify-center">
+                <span className="absolute inset-0 rounded-full bg-primary/20 animate-ping opacity-75" />
+                <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary via-orange-500 to-amber-600 text-white shadow-lg shadow-primary/25">
+                  <Pizza className="h-8 w-8 animate-spin [animation-duration:3s]" />
+                </div>
+              </div>
+              <h3 className="text-xl font-bold tracking-tight text-foreground">
+                Signing You In...
+              </h3>
+              <p className="mt-2 text-xs text-muted-foreground max-w-xs leading-relaxed">
+                {isTargetingPizza
+                  ? "Taking you straight back to your chosen pizza..."
+                  : "Preparing your table & heading to PizzaHub..."}
+              </p>
+              <div className="mt-6 w-48 h-1.5 bg-muted rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-primary/50 via-primary to-orange-500 rounded-full animate-pulse w-full" />
+              </div>
+            </div>
+          )}
+
           <CardHeader className="space-y-2 text-center">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-xs">
               <Pizza className="h-7 w-7" />
@@ -147,7 +180,7 @@ export default function SignInPage() {
             variant="outline"
             className="w-full h-11 relative rounded-xl border-border/80 bg-background hover:bg-muted/60 transition-all active:scale-[0.99] font-medium text-sm shadow-2xs"
             onClick={handleGoogleSignIn}
-            disabled={googleLoading || loading}
+            disabled={googleLoading || loading || isRedirecting}
           >
             {googleLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -197,7 +230,7 @@ export default function SignInPage() {
                         type="email"
                         placeholder="you@example.com"
                         autoComplete="email"
-                        disabled={loading}
+                        disabled={loading || isRedirecting}
                         {...field}
                       />
                     </FormControl>
@@ -218,7 +251,7 @@ export default function SignInPage() {
                           type={showPassword ? "text" : "password"}
                           placeholder="••••••••"
                           autoComplete="current-password"
-                          disabled={loading}
+                          disabled={loading || isRedirecting}
                           {...field}
                         />
                         <button
@@ -243,12 +276,12 @@ export default function SignInPage() {
               <Button
                 type="submit"
                 className="w-full h-11"
-                disabled={loading || googleLoading}
+                disabled={loading || googleLoading || isRedirecting}
               >
-                {loading ? (
+                {loading || isRedirecting ? (
                   <span className="flex items-center gap-2">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Signing In...
+                    {isRedirecting ? "Redirecting..." : "Verifying Credentials..."}
                   </span>
                 ) : (
                   "Sign In"

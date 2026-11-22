@@ -39,10 +39,16 @@ export default function SignUpPage() {
 
   const { data: session, isPending } = authClient.useSession();
 
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [googleLoading, setGoogleLoading] = React.useState(false);
+  const [isRedirecting, setIsRedirecting] = React.useState(false);
+
   React.useEffect(() => {
     if (!isPending && session?.user) {
       const role = ((session.user as { role?: UserRole })?.role) || "customer";
       const target = resolveAuthRedirect(callbackUrl, role);
+      setIsRedirecting(true);
       router.replace(target);
     }
   }, [session, isPending, callbackUrl, router]);
@@ -53,10 +59,6 @@ export default function SignUpPage() {
     const qs = params.toString();
     return qs ? `/sign-in?${qs}` : "/sign-in";
   }, [callbackUrl]);
-
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
-  const [googleLoading, setGoogleLoading] = React.useState(false);
 
   const form = useForm<SignUpInput>({
     resolver: zodResolver(signUpSchema),
@@ -84,23 +86,28 @@ export default function SignUpPage() {
 
       if (res.error) {
         toast.error(res.error.message || "Failed to create account");
+        setLoading(false);
         return;
       }
 
       toast.success("Account created successfully!");
       const target = resolveAuthRedirect(callbackUrl, values.role);
-      router.push(target);
-      router.refresh();
+      setIsRedirecting(true);
+      React.startTransition(() => {
+        router.push(target);
+        router.refresh();
+      });
     } catch {
       toast.error("An unexpected error occurred during sign up");
-    } finally {
       setLoading(false);
+      setIsRedirecting(false);
     }
   };
 
   const handleGoogleSignUp = async () => {
     try {
       setGoogleLoading(true);
+      setIsRedirecting(true);
       document.cookie = `pizzahub_oauth_role=${selectedRole}; path=/; max-age=600; SameSite=Lax`;
       const targetCallback = callbackUrl
         ? `/auth/oauth-callback?callbackUrl=${encodeURIComponent(callbackUrl)}`
@@ -112,13 +119,41 @@ export default function SignUpPage() {
     } catch {
       toast.error("Failed to initialize Google authentication");
       setGoogleLoading(false);
+      setIsRedirecting(false);
     }
   };
+
+  const isTargetingPizza = Boolean(callbackUrl && callbackUrl.startsWith("/menu/"));
 
   return (
     <div className="relative flex min-h-[calc(100vh-8rem)] items-center justify-center px-4 py-12 sm:px-6 lg:px-8 ambient-glow overflow-hidden">
       <div className="w-full max-w-lg">
-        <Card className="w-full shadow-xl border-border/80 bg-card/95 backdrop-blur-sm rounded-3xl">
+        <Card className="relative overflow-hidden w-full shadow-xl border-border/80 bg-card/95 backdrop-blur-sm rounded-3xl">
+          {/* Artisanal Loading & Verification Overlay */}
+          {isRedirecting && (
+            <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-card/95 backdrop-blur-md p-6 text-center animate-in fade-in duration-300">
+              <div className="relative mb-5 flex h-20 w-20 items-center justify-center">
+                <span className="absolute inset-0 rounded-full bg-primary/20 animate-ping opacity-75" />
+                <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary via-orange-500 to-amber-600 text-white shadow-lg shadow-primary/25">
+                  <Pizza className="h-8 w-8 animate-spin [animation-duration:3s]" />
+                </div>
+              </div>
+              <h3 className="text-xl font-bold tracking-tight text-foreground">
+                Creating Your Account...
+              </h3>
+              <p className="mt-2 text-xs text-muted-foreground max-w-xs leading-relaxed">
+                {isTargetingPizza
+                  ? "Taking you straight back to your chosen pizza..."
+                  : selectedRole === "vendor"
+                  ? "Firing up your kitchen & opening Vendor Dashboard..."
+                  : "Preparing your handcrafted pizza experience..."}
+              </p>
+              <div className="mt-6 w-48 h-1.5 bg-muted rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-primary/50 via-primary to-orange-500 rounded-full animate-pulse w-full" />
+              </div>
+            </div>
+          )}
+
           <CardHeader className="space-y-2 text-center">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-xs">
               <Pizza className="h-7 w-7" />
@@ -142,7 +177,7 @@ export default function SignUpPage() {
             variant="outline"
             className="w-full h-11 relative rounded-xl border-border/80 bg-background hover:bg-muted/60 transition-all active:scale-[0.99] font-medium text-sm shadow-2xs"
             onClick={handleGoogleSignUp}
-            disabled={googleLoading || loading}
+            disabled={googleLoading || loading || isRedirecting}
           >
             {googleLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -190,12 +225,14 @@ export default function SignUpPage() {
                     <div className="grid grid-cols-2 gap-3.5 items-stretch">
                       <button
                         type="button"
+                        disabled={loading || isRedirecting}
                         onClick={() => field.onChange("customer")}
                         className={cn(
                           "group relative flex flex-col items-start p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer overflow-hidden",
                           selectedRole === "customer"
                             ? "border-primary/60 bg-linear-to-b from-primary/10 via-primary/5 to-transparent shadow-xs ring-1 ring-primary/30"
-                            : "border-border/80 bg-muted/20 hover:bg-muted/40 hover:border-border text-muted-foreground"
+                            : "border-border/80 bg-muted/20 hover:bg-muted/40 hover:border-border text-muted-foreground",
+                          (loading || isRedirecting) && "opacity-60 cursor-not-allowed"
                         )}
                       >
                         <div className="flex items-center justify-between w-full mb-3">
@@ -237,12 +274,14 @@ export default function SignUpPage() {
 
                       <button
                         type="button"
+                        disabled={loading || isRedirecting}
                         onClick={() => field.onChange("vendor")}
                         className={cn(
                           "group relative flex flex-col items-start p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer overflow-hidden",
                           selectedRole === "vendor"
                             ? "border-primary/60 bg-linear-to-b from-primary/10 via-primary/5 to-transparent shadow-xs ring-1 ring-primary/30"
-                            : "border-border/80 bg-muted/20 hover:bg-muted/40 hover:border-border text-muted-foreground"
+                            : "border-border/80 bg-muted/20 hover:bg-muted/40 hover:border-border text-muted-foreground",
+                          (loading || isRedirecting) && "opacity-60 cursor-not-allowed"
                         )}
                       >
                         <div className="flex items-center justify-between w-full mb-3">
@@ -297,7 +336,7 @@ export default function SignUpPage() {
                       <Input
                         placeholder="John Doe"
                         autoComplete="name"
-                        disabled={loading}
+                        disabled={loading || isRedirecting}
                         {...field}
                       />
                     </FormControl>
@@ -317,7 +356,7 @@ export default function SignUpPage() {
                         type="email"
                         placeholder="you@example.com"
                         autoComplete="email"
-                        disabled={loading}
+                        disabled={loading || isRedirecting}
                         {...field}
                       />
                     </FormControl>
@@ -338,7 +377,7 @@ export default function SignUpPage() {
                           type={showPassword ? "text" : "password"}
                           placeholder="Min 6 chars, 1 uppercase, 1 lowercase"
                           autoComplete="new-password"
-                          disabled={loading}
+                          disabled={loading || isRedirecting}
                           {...field}
                         />
                         <button
@@ -370,7 +409,7 @@ export default function SignUpPage() {
                       <Input
                         type="url"
                         placeholder="https://example.com/photo.jpg"
-                        disabled={loading}
+                        disabled={loading || isRedirecting}
                         {...field}
                       />
                     </FormControl>
@@ -382,12 +421,12 @@ export default function SignUpPage() {
               <Button
                 type="submit"
                 className="w-full h-11"
-                disabled={loading || googleLoading}
+                disabled={loading || googleLoading || isRedirecting}
               >
-                {loading ? (
+                {loading || isRedirecting ? (
                   <span className="flex items-center gap-2">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Creating Account...
+                    {isRedirecting ? "Setting Up..." : "Creating Account..."}
                   </span>
                 ) : (
                   `Sign Up as ${selectedRole === "vendor" ? "Vendor" : "Customer"}`
