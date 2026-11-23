@@ -51,7 +51,7 @@ export function OrderForm({ item }: OrderFormProps) {
   const onSubmit = async (values: OrderInput) => {
     if (!session) {
       toast.error("Please sign in to place an order");
-      router.push(`/sign-in?callbackUrl=/menu/${item.id}`);
+      router.push(`/sign-in?callbackUrl=${encodeURIComponent(`/menu/${item.id}`)}`);
       return;
     }
 
@@ -200,7 +200,7 @@ export function OrderForm({ item }: OrderFormProps) {
                 beforeStart={() => {
                   if (!session) {
                     toast.error("Please sign in to place an order");
-                    router.push(`/sign-in?callbackUrl=/menu/${item.id}`);
+                    router.push(`/sign-in?callbackUrl=${encodeURIComponent(`/menu/${item.id}`)}`);
                     return false;
                   }
                   if (isOwner) {

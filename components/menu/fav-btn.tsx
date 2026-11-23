@@ -33,7 +33,8 @@ export function FavBtn({
 
     if (!session) {
       toast.error("Please sign in to save your favorite pizzas");
-      router.push(`/sign-in?callbackUrl=/menu/${itemId}`);
+      const returnUrl = typeof window !== "undefined" ? window.location.pathname : `/menu/${itemId}`;
+      router.push(`/sign-in?callbackUrl=${encodeURIComponent(returnUrl)}`);
       return;
     }
 

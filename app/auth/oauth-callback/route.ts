@@ -3,7 +3,7 @@ import { cookies, headers } from "next/headers";
 import { ObjectId } from "mongodb";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { ROLE_DASHBOARD_ROUTES } from "@/lib/constants";
+import { resolveAuthRedirect } from "@/lib/constants";
 import type { UserRole } from "@/types";
 
 export const dynamic = "force-dynamic";
@@ -46,19 +46,16 @@ export async function GET(request: NextRequest) {
       userRole = targetRole;
     }
 
-    let redirectTarget = "/dashboard";
-    if (callbackUrl && callbackUrl.startsWith("/") && !callbackUrl.startsWith("//")) {
-      redirectTarget = callbackUrl;
-    } else {
-      redirectTarget =
-        ROLE_DASHBOARD_ROUTES[userRole as UserRole] || "/dashboard/customer";
-    }
+    const redirectTarget = resolveAuthRedirect(
+      callbackUrl,
+      userRole as UserRole
+    );
 
     const response = NextResponse.redirect(new URL(redirectTarget, request.url));
     response.cookies.delete("pizzahub_oauth_role");
     return response;
   } catch (err) {
     console.error("OAuth callback error:", err);
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/sign-in", request.url));
   }
 }

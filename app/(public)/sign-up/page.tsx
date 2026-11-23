@@ -47,11 +47,26 @@ export default function SignUpPage() {
   React.useEffect(() => {
     if (!isPending && session?.user) {
       const role = ((session.user as { role?: UserRole })?.role) || "customer";
-      const target = resolveAuthRedirect(callbackUrl, role);
       setIsRedirecting(true);
+
+      if (initialRole === "vendor" && role === "customer") {
+        toast.info("You are currently signed in as a Customer. Please sign out first to register a Vendor kitchen.", {
+          duration: 5000,
+        });
+        router.replace("/dashboard/customer");
+        return;
+      }
+
+      if (role === "vendor") {
+        toast.info("You are already registered as an Artisan Vendor.");
+      } else if (role === "admin") {
+        toast.info("You are logged in as an Administrator.");
+      }
+
+      const target = resolveAuthRedirect(callbackUrl, role);
       router.replace(target);
     }
-  }, [session, isPending, callbackUrl, router]);
+  }, [session, isPending, callbackUrl, initialRole, router]);
 
   const signInHref = React.useMemo(() => {
     const params = new URLSearchParams();

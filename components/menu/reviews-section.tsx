@@ -168,7 +168,7 @@ export function ReviewsSection({
                 Sign in to your PizzaHub account to leave a rating and share your taste review.
               </p>
               <Button asChild size="sm" className="w-full">
-                <Link href={`/sign-in?callbackUrl=/menu/${itemId}`}>Sign In to Review</Link>
+                <Link href={`/sign-in?callbackUrl=${encodeURIComponent(`/menu/${itemId}`)}`}>Sign In to Review</Link>
               </Button>
             </div>
           ) : isOwner ? (

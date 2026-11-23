@@ -1,14 +1,22 @@
 "use client";
 
+import * as React from "react";
 import Image from "next/image";
-import { ArrowRight, Flame, Star, ShieldCheck } from "lucide-react";
+import { ArrowRight, Flame, Star, ShieldCheck, UtensilsCrossed, Shield } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { BlurText } from "@/components/motion-brew/blur-text";
 import { HighlightText } from "@/components/motion-brew/highlight-text";
 import { TiltCard } from "@/components/motion-brew/tilt-card";
 import { MagneticButton } from "@/components/motion-brew/magnetic-button";
+import { useSession } from "@/lib/auth-client";
+import { BecomeVendorModal } from "./become-vendor-modal";
 
 export function Hero() {
+  const { data: session } = useSession();
+  const [vendorModalOpen, setVendorModalOpen] = React.useState(false);
+
+  const user = session?.user;
+  const role = (user as { role?: string })?.role || (session ? "customer" : null);
   return (
     <section className="relative overflow-hidden ambient-glow bg-gradient-to-b from-primary/5 via-background to-background py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -45,15 +53,50 @@ export function Hero() {
                 <span>Explore The Menu</span>
                 <ArrowRight className="h-4 w-4" />
               </MagneticButton>
-              <MagneticButton
-                href="/sign-up?role=vendor"
-                variant="outline"
-                strength={0.25}
-                labelStrength={0.12}
-                className="h-12 px-6 text-base rounded-xl font-bold border-2 border-border/80 bg-card text-foreground hover:bg-muted hover:border-foreground/30 shadow-xs transition-all"
-              >
-                <span>Join As A Vendor</span>
-              </MagneticButton>
+
+              {role === "vendor" ? (
+                <MagneticButton
+                  href="/dashboard/vendor"
+                  variant="outline"
+                  strength={0.25}
+                  labelStrength={0.12}
+                  className="h-12 px-6 text-base rounded-xl font-bold border-2 border-border/80 bg-card text-foreground hover:bg-muted hover:border-foreground/30 shadow-xs transition-all gap-2"
+                >
+                  <UtensilsCrossed className="h-4 w-4 text-primary" />
+                  <span>Kitchen Hub</span>
+                </MagneticButton>
+              ) : role === "admin" ? (
+                <MagneticButton
+                  href="/dashboard/admin"
+                  variant="outline"
+                  strength={0.25}
+                  labelStrength={0.12}
+                  className="h-12 px-6 text-base rounded-xl font-bold border-2 border-border/80 bg-card text-foreground hover:bg-muted hover:border-foreground/30 shadow-xs transition-all gap-2"
+                >
+                  <Shield className="h-4 w-4 text-primary" />
+                  <span>Admin Console</span>
+                </MagneticButton>
+              ) : role === "customer" ? (
+                <MagneticButton
+                  onClick={() => setVendorModalOpen(true)}
+                  variant="outline"
+                  strength={0.25}
+                  labelStrength={0.12}
+                  className="h-12 px-6 text-base rounded-xl font-bold border-2 border-border/80 bg-card text-foreground hover:bg-muted hover:border-foreground/30 shadow-xs transition-all cursor-pointer"
+                >
+                  <span>Join As A Vendor</span>
+                </MagneticButton>
+              ) : (
+                <MagneticButton
+                  href="/sign-up?role=vendor"
+                  variant="outline"
+                  strength={0.25}
+                  labelStrength={0.12}
+                  className="h-12 px-6 text-base rounded-xl font-bold border-2 border-border/80 bg-card text-foreground hover:bg-muted hover:border-foreground/30 shadow-xs transition-all"
+                >
+                  <span>Join As A Vendor</span>
+                </MagneticButton>
+              )}
             </div>
 
             <div className="grid grid-cols-3 gap-2 sm:gap-6 pt-6 border-t border-border">
@@ -125,6 +168,12 @@ export function Hero() {
           </div>
         </div>
       </div>
+
+      <BecomeVendorModal
+        open={vendorModalOpen}
+        onOpenChange={setVendorModalOpen}
+        userEmail={user?.email || undefined}
+      />
     </section>
   );
 }

@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 import {
   X,
@@ -28,6 +28,7 @@ import { DatePicker } from "@/components/reui/date-picker";
 
 export function CartSheet() {
   const router = useRouter();
+  const pathname = usePathname();
   const { data: session } = authClient.useSession();
   const {
     items,
@@ -80,7 +81,8 @@ export function CartSheet() {
 
     if (!user) {
       closeCart();
-      router.push(`/sign-in?callbackUrl=/menu`);
+      const currentPath = pathname && pathname !== "/sign-in" && pathname !== "/sign-up" ? pathname : "/menu";
+      router.push(`/sign-in?callbackUrl=${encodeURIComponent(currentPath)}`);
       return;
     }
 
@@ -353,7 +355,8 @@ export function CartSheet() {
                   type="button"
                   onClick={() => {
                     closeCart();
-                    router.push("/sign-in?callbackUrl=/menu");
+                    const currentPath = pathname && pathname !== "/sign-in" && pathname !== "/sign-up" ? pathname : "/menu";
+                    router.push(`/sign-in?callbackUrl=${encodeURIComponent(currentPath)}`);
                   }}
                   className="w-full h-11 rounded-xl font-bold"
                 >
