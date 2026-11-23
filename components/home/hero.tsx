@@ -45,16 +45,16 @@ export function Hero() {
               className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-xl [text-wrap:pretty]"
             />
 
-            <div className="flex flex-wrap items-center gap-4 pt-2">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-2 w-full sm:w-auto">
               <MagneticButton
                 href="/menu"
                 variant="primary"
                 strength={0.25}
                 labelStrength={0.12}
-                className="h-12 px-8 text-base rounded-xl font-bold shadow-md hover:bg-primary/90 transition-colors"
+                className="h-12 w-full sm:w-56 text-base rounded-xl font-bold shadow-md hover:bg-primary/90 transition-colors justify-center whitespace-nowrap cursor-pointer"
               >
                 <span>Explore The Menu</span>
-                <ArrowRight className="h-4 w-4 ml-1.5" />
+                <ArrowRight className="h-4 w-4 ml-1.5 shrink-0" />
               </MagneticButton>
 
               {role === "vendor" ? (
@@ -63,9 +63,9 @@ export function Hero() {
                   variant="outline"
                   strength={0.25}
                   labelStrength={0.12}
-                  className="h-12 px-6 text-base rounded-xl font-bold border-2 border-border/80 bg-card text-foreground hover:bg-muted hover:border-foreground/30 shadow-xs transition-all gap-2"
+                  className="h-12 w-full sm:w-56 text-base rounded-xl font-bold border-2 border-border/80 bg-card text-foreground hover:bg-muted hover:border-foreground/30 shadow-xs transition-all justify-center whitespace-nowrap gap-2 cursor-pointer"
                 >
-                  <UtensilsCrossed className="h-4 w-4 text-primary" />
+                  <UtensilsCrossed className="h-4 w-4 text-primary shrink-0" />
                   <span>Kitchen Hub</span>
                 </MagneticButton>
               ) : role === "admin" ? (
@@ -74,9 +74,9 @@ export function Hero() {
                   variant="outline"
                   strength={0.25}
                   labelStrength={0.12}
-                  className="h-12 px-6 text-base rounded-xl font-bold border-2 border-border/80 bg-card text-foreground hover:bg-muted hover:border-foreground/30 shadow-xs transition-all gap-2"
+                  className="h-12 w-full sm:w-56 text-base rounded-xl font-bold border-2 border-border/80 bg-card text-foreground hover:bg-muted hover:border-foreground/30 shadow-xs transition-all justify-center whitespace-nowrap gap-2 cursor-pointer"
                 >
-                  <Shield className="h-4 w-4 text-primary" />
+                  <Shield className="h-4 w-4 text-primary shrink-0" />
                   <span>Admin Console</span>
                 </MagneticButton>
               ) : role === "customer" ? (
@@ -85,7 +85,7 @@ export function Hero() {
                   variant="outline"
                   strength={0.25}
                   labelStrength={0.12}
-                  className="h-12 px-6 text-base rounded-xl font-bold border-2 border-border/80 bg-card text-foreground hover:bg-muted hover:border-foreground/30 shadow-xs transition-all cursor-pointer"
+                  className="h-12 w-full sm:w-56 text-base rounded-xl font-bold border-2 border-border/80 bg-card text-foreground hover:bg-muted hover:border-foreground/30 shadow-xs transition-all justify-center whitespace-nowrap cursor-pointer"
                 >
                   <span>Join As A Vendor</span>
                 </MagneticButton>
@@ -95,7 +95,7 @@ export function Hero() {
                   variant="outline"
                   strength={0.25}
                   labelStrength={0.12}
-                  className="h-12 px-6 text-base rounded-xl font-bold border-2 border-border/80 bg-card text-foreground hover:bg-muted hover:border-foreground/30 shadow-xs transition-all"
+                  className="h-12 w-full sm:w-56 text-base rounded-xl font-bold border-2 border-border/80 bg-card text-foreground hover:bg-muted hover:border-foreground/30 shadow-xs transition-all justify-center whitespace-nowrap cursor-pointer"
                 >
                   <span>Join As A Vendor</span>
                 </MagneticButton>

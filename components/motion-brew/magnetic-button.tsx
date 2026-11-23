@@ -190,7 +190,7 @@ export const MagneticButton = React.forwardRef<
         />
       )}
       <motion.span
-        className="relative inline-flex items-center gap-2 motion-reduce:transform-none"
+        className="relative inline-flex items-center justify-center gap-2 motion-reduce:transform-none"
         style={{ x: labelX, y: labelY }}
       >
         {children}
