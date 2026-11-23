@@ -21,7 +21,7 @@ interface MenuPageProps {
 
 function MenuGridSkeleton() {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-6 mt-6 sm:mt-8">
+    <div className="grid grid-cols-1 min-[520px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mt-6 sm:mt-8">
       {Array.from({ length: 8 }).map((_, i) => (
         <div key={i} className="rounded-xl sm:rounded-2xl border border-border p-2.5 sm:p-4 space-y-3 sm:space-y-4">
           <Skeleton className="aspect-4/3 w-full rounded-lg sm:rounded-xl" />
@@ -87,7 +87,7 @@ export default async function BrowseMenuPage({ searchParams }: MenuPageProps) {
 
       <Suspense fallback={<MenuGridSkeleton />}>
         {result.data.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-6 mt-4 sm:mt-6 w-full min-w-0 max-w-full">
+          <div className="grid grid-cols-1 min-[520px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mt-4 sm:mt-6 w-full min-w-0 max-w-full">
             {result.data.map((item) => (
               <MenuCard key={item.id} item={item} />
             ))}
