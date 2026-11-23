@@ -17,10 +17,12 @@ export function Hero() {
 
   const user = session?.user;
   const role = (user as { role?: string })?.role || (session ? "customer" : null);
+
   return (
     <section className="relative overflow-hidden ambient-glow bg-gradient-to-b from-primary/5 via-background to-background py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
+          {/* Left Column: Copy & Actions */}
           <div className="space-y-6">
             <Badge variant="accent" className="gap-1.5 px-3 py-1 text-xs uppercase tracking-wider font-semibold">
               <Flame className="h-3.5 w-3.5" />
@@ -29,15 +31,16 @@ export function Hero() {
 
             <BlurText
               as="h1"
-              text="Real Artisanal Pizza, Baked by Master Pizzaiolos"
+              text="Crafted From The Crust Up"
               className="text-4xl font-extrabold tracking-tight text-foreground sm:text-6xl sm:leading-[1.1] [text-wrap:balance]"
               stagger={0.06}
               duration={0.6}
+              trigger="mount"
             />
 
             <HighlightText
-              text="Discover authentic stone-baked pizzas crafted by independent kitchens in your area. 48-hour fermented sourdough, San Marzano tomatoes, and fresh mozzarella delivered hot to your door."
-              highlights={["independent kitchens", "48-hour fermented sourdough", "delivered hot to your door"]}
+              text="Every ingredient sourced directly from artisan growers. Zero additives, pure sourdough perfection."
+              highlights={["artisan growers", "Zero additives", "pure sourdough perfection"]}
               color="rgba(230, 126, 34, 0.16)"
               className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-xl [text-wrap:pretty]"
             />
@@ -51,7 +54,7 @@ export function Hero() {
                 className="h-12 px-8 text-base rounded-xl font-bold shadow-md hover:bg-primary/90 transition-colors"
               >
                 <span>Explore The Menu</span>
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-4 w-4 ml-1.5" />
               </MagneticButton>
 
               {role === "vendor" ? (
@@ -132,6 +135,7 @@ export function Hero() {
             </div>
           </div>
 
+          {/* Right Column: Option 2 Cinematic 3D Levitating Craft Card */}
           <div>
             <TiltCard
               maxTilt={8}
@@ -141,27 +145,43 @@ export function Hero() {
               className="relative mx-auto aspect-4/3 w-full max-w-lg lg:max-w-none overflow-hidden rounded-3xl border-4 border-card shadow-2xl ring-1 ring-black/10 dark:ring-white/10 group"
             >
               <Image
-                src="https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=1200&auto=format&fit=crop"
-                alt="Stone baked pepperoni pizza with fresh basil"
+                src="/images/hero-banner.jpg"
+                alt="Cinematic 3D levitating stone-baked pizza with fresh flying San Marzano tomatoes, buffalo mozzarella and basil"
                 fill
                 priority
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-linear-to-tr from-black/60 via-transparent to-transparent" />
-              <div className="absolute bottom-4 left-4 right-4 rounded-xl bg-background/85 p-4 backdrop-blur-md border border-border/80 shadow-lg">
+              <div className="absolute inset-0 bg-linear-to-tr from-black/70 via-black/20 to-transparent" />
+
+              {/* Floating Live Kitchen Badge */}
+              <div className="absolute top-4 left-4 z-10 flex items-center gap-2 rounded-full bg-background/90 backdrop-blur-md px-3 py-1.5 text-xs font-semibold text-foreground border border-border/80 shadow-lg">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                </span>
+                <span>Hearth Fired at 900°F</span>
+              </div>
+
+              {/* Bottom Signature Overlay */}
+              <div className="absolute bottom-4 left-4 right-4 rounded-2xl bg-background/90 dark:bg-card/90 p-4 sm:p-5 backdrop-blur-md border border-border/80 shadow-2xl">
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <span className="text-xs font-bold text-primary uppercase tracking-wider">
+                    <span className="text-[11px] font-extrabold text-primary uppercase tracking-widest">
                       Chef&apos;s Signature
                     </span>
-                    <h4 className="text-base font-bold text-foreground line-clamp-1">
-                      Neapolitan Margherita &amp; Truffle
+                    <h4 className="text-base sm:text-lg font-extrabold text-foreground line-clamp-1">
+                      Artisanal Burrata &amp; San Marzano Special
                     </h4>
+                    <p className="text-xs text-muted-foreground hidden sm:block mt-0.5">
+                      48h Ferment • Buffalo Mozzarella • Fresh Basil DOP
+                    </p>
                   </div>
-                  <span className="shrink-0 rounded-lg bg-primary px-3 py-1 font-bold text-primary-foreground text-sm tabular-nums shadow-xs">
-                    $18.50
-                  </span>
+                  <div className="text-right shrink-0">
+                    <span className="inline-block rounded-xl bg-primary px-3.5 py-1.5 font-black text-primary-foreground text-base tabular-nums shadow-sm">
+                      $19.50
+                    </span>
+                  </div>
                 </div>
               </div>
             </TiltCard>

@@ -19,7 +19,12 @@ export function MenuFilters() {
   const searchParams = useSearchParams();
 
   const currentSearch = searchParams.get("search") ?? "";
-  const currentCategory = searchParams.get("category") ?? "All";
+  const rawCategory = searchParams.get("category");
+  const currentCategory = React.useMemo(() => {
+    if (!rawCategory) return "All";
+    const decoded = decodeURIComponent(rawCategory.replace(/\+/g, " ")).trim();
+    return CATEGORIES.includes(decoded as (typeof CATEGORIES)[number]) ? decoded : "All";
+  }, [rawCategory]);
   const currentLocation = searchParams.get("location") ?? "";
   const currentSort = searchParams.get("sort") ?? "newest";
 
@@ -158,17 +163,18 @@ export function MenuFilters() {
       </div>
 
       {/* Quick-tap category pills */}
-      <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 pt-0.5 text-xs w-full max-w-full scrollbar-none touch-pan-x min-w-0">
+      <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 pt-0.5 text-xs w-full max-w-full scrollbar-none touch-pan-x min-w-0" role="toolbar" aria-label="Category filters">
         {["All", ...CATEGORIES].map((cat) => {
           const isSelected = currentCategory === cat;
           return (
             <button
               key={cat}
               type="button"
+              aria-pressed={isSelected}
               onClick={() => updateParam("category", cat)}
-              className={`min-h-[30px] sm:min-h-[38px] px-2.5 sm:px-3.5 py-1 sm:py-1.5 text-[11px] sm:text-xs inline-flex items-center justify-center shrink-0 rounded-full font-semibold transition-all cursor-pointer border active:scale-[0.97] whitespace-nowrap ${
+              className={`min-h-[36px] sm:min-h-[40px] px-3 sm:px-4 py-1.5 text-xs sm:text-xs inline-flex items-center justify-center shrink-0 rounded-full font-semibold transition-all cursor-pointer border active:scale-95 whitespace-nowrap focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary ${
                 isSelected
-                  ? "bg-primary text-primary-foreground border-primary shadow-xs"
+                  ? "bg-primary text-primary-foreground border-primary shadow-xs font-bold"
                   : "bg-background border-border text-muted-foreground hover:text-foreground hover:bg-muted/70"
               }`}
             >

@@ -4,19 +4,12 @@ import * as React from "react";
 import Link from "next/link";
 import {
   Pizza,
-  Flame,
-  Clock,
-  ShieldCheck,
-  Lock,
-  Send,
   Loader2,
   CheckCircle2,
-  ArrowUpRight,
-  Mail,
-  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { useCart } from "@/lib/cart";
 
 function XLogo(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -53,6 +46,8 @@ function GitHubLogo(props: React.SVGProps<SVGSVGElement>) {
 }
 
 export function Footer() {
+  const { itemCount } = useCart();
+  const hasItems = itemCount > 0;
   const [email, setEmail] = React.useState("");
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [subscribed, setSubscribed] = React.useState(false);
@@ -90,55 +85,49 @@ export function Footer() {
   return (
     <footer
       suppressHydrationWarning
-      className="border-t border-border/80 bg-linear-to-b from-background via-muted/30 to-muted/60 text-foreground pt-16 pb-12 transition-colors"
+      className="border-t border-[#e7dfd5] dark:border-[#1c1815] bg-[#f7f2ea] dark:bg-[#0a0806] text-[#1c1917] dark:text-white pt-12 pb-10 transition-colors duration-300"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Newsletter Club Banner */}
-        <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-border/70 bg-card p-5 sm:p-8 lg:p-12 mb-16 shadow-lg shadow-black/5">
-          <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
+        {/* Ambient Newsletter Card */}
+        <div className="relative overflow-hidden rounded-2xl border border-orange-200/80 dark:border-amber-900/40 bg-white/95 dark:bg-[#120f0d] p-6 sm:p-8 lg:p-10 mb-12 shadow-sm dark:shadow-[0_0_50px_-15px_rgba(234,88,12,0.22)]">
+          <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-orange-500/10 dark:bg-orange-600/15 blur-3xl" />
+          <div className="pointer-events-none absolute -left-16 -bottom-16 h-64 w-64 rounded-full bg-amber-500/10 dark:bg-amber-600/10 blur-3xl" />
 
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
-            <div className="lg:col-span-7 space-y-2.5 sm:space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs font-bold tracking-wide uppercase">
-                <Flame className="h-3.5 w-3.5 animate-pulse text-primary" />
-                The Artisanal Sourdough Club
-              </div>
-              <h3 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-foreground">
-                Fresh From The Stone Oven
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            <div className="lg:col-span-7 space-y-2">
+              <h3 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-[#1c1917] dark:text-white flex items-center gap-2.5">
+                <span>Fresh From The Stone Oven</span>
+                <span className="text-2xl sm:text-3xl" aria-hidden="true">🔥</span>
               </h3>
-              <p className="text-xs sm:text-sm lg:text-base text-muted-foreground leading-relaxed max-w-xl">
-                Get first access to secret weekend pizza drops, seasonal heirloom sourdough releases, and neighborhood chef collaborations. No spam, only hot pies.
+              <p className="text-xs sm:text-sm text-[#78716c] dark:text-neutral-400 leading-relaxed max-w-xl">
+                Get secret weekly specials and chef recipes straight to your inbox
               </p>
             </div>
 
             <div className="lg:col-span-5 w-full">
               {subscribed ? (
-                <div className="flex items-center gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-emerald-700 dark:text-emerald-400">
-                  <CheckCircle2 className="h-5 w-5 shrink-0" />
+                <div className="flex items-center gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3.5 text-emerald-700 dark:text-emerald-400">
+                  <CheckCircle2 className="h-4 w-4 shrink-0" />
                   <div className="text-xs sm:text-sm font-medium">
-                    You&apos;re in! Watch your inbox for secret oven drops and private tasting invites.
+                    You&apos;re in! Watch your inbox for secret oven drops and private recipes.
                   </div>
                 </div>
               ) : (
-                <form onSubmit={handleSubscribe} className="space-y-2.5 w-full">
-                  <div className="flex flex-col sm:flex-row items-stretch gap-2.5 sm:gap-2">
-                    <div className="relative flex-1">
-                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Enter your email for oven drops..."
-                        required
-                        className="w-full h-11 pl-10 pr-4 rounded-xl border border-border/80 bg-background/95 dark:bg-muted/40 text-sm text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all shadow-xs"
-                        aria-label="Email address for newsletter"
-                      />
-                    </div>
+                <form onSubmit={handleSubscribe} className="w-full">
+                  <div className="flex flex-col sm:flex-row items-stretch gap-2.5">
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter your email"
+                      required
+                      className="w-full h-11 px-4 rounded-xl border border-[#e7dfd5] dark:border-neutral-800 bg-[#faf7f2] dark:bg-[#1a1614] text-sm text-[#1c1917] dark:text-white placeholder:text-[#a8a29e] dark:placeholder:text-neutral-500 focus:outline-hidden focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500 transition-all shadow-xs"
+                      aria-label="Email address for newsletter"
+                    />
                     <Button
                       type="submit"
                       disabled={isSubmitting}
-                      className="h-11 px-6 rounded-xl font-bold gap-2 shrink-0 shadow-sm cursor-pointer"
+                      className="h-11 px-6 rounded-xl font-bold bg-[#ea580c] hover:bg-[#ea580c]/90 text-white cursor-pointer shadow-xs shrink-0"
                     >
                       {isSubmitting ? (
                         <>
@@ -146,106 +135,37 @@ export function Footer() {
                           <span>Joining...</span>
                         </>
                       ) : (
-                        <>
-                          <Send className="h-4 w-4" />
-                          <span>Join Club</span>
-                        </>
+                        <span>Join Club</span>
                       )}
                     </Button>
                   </div>
-                  <p className="text-[11px] sm:text-xs text-muted-foreground pl-0.5 flex items-center gap-1.5">
-                    <Sparkles className="h-3 w-3 text-primary shrink-0" />
-                    <span>Free sourdough tasting perks. Unsubscribe anytime with 1-click.</span>
-                  </p>
                 </form>
               )}
             </div>
           </div>
         </div>
 
-        {/* Quality, Craft & Trust Badges */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
-          <div className="flex items-center gap-3.5 p-4 rounded-2xl border border-border/60 bg-card/60 backdrop-blur-xs">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400">
-              <Flame className="h-5 w-5" />
-            </div>
-            <div>
-              <div className="text-xs font-bold text-foreground">800°F Stone Ovens</div>
-              <div className="text-[11px] text-muted-foreground">Authentic high-heat crust bake</div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3.5 p-4 rounded-2xl border border-border/60 bg-card/60 backdrop-blur-xs">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
-              <Clock className="h-5 w-5" />
-            </div>
-            <div>
-              <div className="text-xs font-bold text-foreground">48h Cold Ferment</div>
-              <div className="text-[11px] text-muted-foreground">Slow bio-available sourdough</div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3.5 p-4 rounded-2xl border border-border/60 bg-card/60 backdrop-blur-xs">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-              <ShieldCheck className="h-5 w-5" />
-            </div>
-            <div>
-              <div className="text-xs font-bold text-foreground">D.O.P. Certified</div>
-              <div className="text-[11px] text-muted-foreground">San Marzano & Mozzarella</div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3.5 p-4 rounded-2xl border border-border/60 bg-card/60 backdrop-blur-xs">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400">
-              <Lock className="h-5 w-5" />
-            </div>
-            <div>
-              <div className="text-xs font-bold text-foreground">Stripe Encrypted</div>
-              <div className="text-[11px] text-muted-foreground">PCI-DSS Level 1 payments</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Live Status Pill & Operational Hub */}
-        <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl border border-border/60 bg-card/80 mb-14 text-xs">
-          <div className="flex items-center gap-2.5">
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
-            </span>
-            <span className="font-semibold text-foreground">Live Kitchen Operations:</span>
-            <span className="text-muted-foreground">17 Stone Ovens Baking Now across 6 neighborhood hubs</span>
-          </div>
-          <Link
-            href="/menu"
-            className="inline-flex items-center gap-1 font-semibold text-primary hover:text-primary/80 transition-colors"
-          >
-            <span>Order Hot Sourdough Delivery</span>
-            <ArrowUpRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
-
-        {/* 5-Column Navigation Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 lg:gap-12 pb-14 border-b border-border/70">
-          {/* Brand Col */}
-          <div className="col-span-2 md:col-span-1 space-y-4">
-            <Link href="/" className="inline-flex items-center gap-2.5">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
-                <Pizza className="h-5 w-5" />
+        {/* 4-Column Navigation Grid matching target mockup */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 pb-12 border-b border-[#e7dfd5] dark:border-neutral-800/80">
+          {/* Column 1: PizzaHub Brand */}
+          <div className="col-span-2 lg:col-span-1 space-y-3.5">
+            <Link href="/" className="inline-flex items-center gap-3 group">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-orange-500/10 dark:bg-gradient-to-br dark:from-amber-500/20 dark:to-orange-500/20 border border-orange-500/30 dark:border-orange-500/40 text-orange-600 dark:text-orange-500 shadow-sm dark:shadow-[0_0_25px_rgba(234,88,12,0.35)] transition-transform group-hover:scale-105">
+                <Pizza className="h-6 w-6 text-orange-600 dark:text-orange-500" />
               </div>
-              <span className="text-xl font-extrabold tracking-tight">
-                Pizza<span className="text-primary">Hub</span>
+              <span className="text-2xl font-black tracking-tight text-[#1c1917] dark:text-white">
+                Pizza<span className="text-orange-600 dark:text-orange-500">Hub</span>
               </span>
             </Link>
-            <p className="text-xs text-muted-foreground leading-relaxed pr-2">
-              The premier platform connecting vetted artisanal pizza kitchens with true sourdough enthusiasts. Baked at 800°F with local organic grains.
+            <p className="text-xs text-[#78716c] dark:text-neutral-400 leading-relaxed max-w-[220px]">
+              Artisanal stone-baked pizzas delivered hot
             </p>
-            <div className="flex items-center gap-2 pt-2">
+            <div className="flex items-center gap-2.5 pt-2">
               <a
                 href="https://x.com"
                 target="_blank"
                 rel="noreferrer"
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-[#e7dfd5] dark:border-neutral-800 bg-white dark:bg-[#14110f] text-[#78716c] dark:text-neutral-400 hover:text-[#1c1917] dark:hover:text-white hover:border-orange-500/40 dark:hover:border-neutral-600 transition-colors cursor-pointer shadow-xs"
                 aria-label="Follow PizzaHub on X"
               >
                 <XLogo className="h-3.5 w-3.5" />
@@ -254,7 +174,7 @@ export function Footer() {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noreferrer"
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-[#e7dfd5] dark:border-neutral-800 bg-white dark:bg-[#14110f] text-[#78716c] dark:text-neutral-400 hover:text-[#1c1917] dark:hover:text-white hover:border-orange-500/40 dark:hover:border-neutral-600 transition-colors cursor-pointer shadow-xs"
                 aria-label="Follow PizzaHub on Instagram"
               >
                 <InstagramLogo className="h-4 w-4" />
@@ -263,198 +183,134 @@ export function Footer() {
                 href="https://youtube.com"
                 target="_blank"
                 rel="noreferrer"
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-[#e7dfd5] dark:border-neutral-800 bg-white dark:bg-[#14110f] text-[#78716c] dark:text-neutral-400 hover:text-[#1c1917] dark:hover:text-white hover:border-orange-500/40 dark:hover:border-neutral-600 transition-colors cursor-pointer shadow-xs"
                 aria-label="Follow PizzaHub on YouTube"
               >
                 <YouTubeLogo className="h-3.5 w-3.5" />
               </a>
               <a
-                href="https://github.com"
+                href="https://github.com/srpranto"
                 target="_blank"
                 rel="noreferrer"
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors"
-                aria-label="PizzaHub Open Source"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-[#e7dfd5] dark:border-neutral-800 bg-white dark:bg-[#14110f] text-[#78716c] dark:text-neutral-400 hover:text-[#1c1917] dark:hover:text-white hover:border-orange-500/40 dark:hover:border-neutral-600 transition-colors cursor-pointer shadow-xs"
+                aria-label="PizzaHub on GitHub"
               >
                 <GitHubLogo className="h-4 w-4" />
               </a>
             </div>
           </div>
 
-          {/* Col 1: Artisanal Menu */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-foreground">
-              Artisanal Menu
+          {/* Column 2: Explore Menu */}
+          <div className="space-y-3.5">
+            <h4 className="text-sm font-bold tracking-wide text-orange-600 dark:text-orange-400">
+              Explore Menu
             </h4>
-            <ul className="space-y-2 text-xs text-muted-foreground">
+            <ul className="space-y-2.5 text-xs text-[#57534e] dark:text-neutral-400">
               <li>
-                <Link href="/menu" className="hover:text-primary transition-colors">
-                  All Stone-Baked Pies
+                <Link href="/menu" className="hover:text-[#1c1917] dark:hover:text-white transition-colors">
+                  All Pizzas
                 </Link>
               </li>
               <li>
-                <Link href="/menu?category=Classic+Pizzas" className="hover:text-primary transition-colors">
-                  Classic Margherita & Marinara
+                <Link href="/menu?category=Classic+Pizzas" className="hover:text-[#1c1917] dark:hover:text-white transition-colors">
+                  Classic Margherita
                 </Link>
               </li>
               <li>
-                <Link href="/menu?category=Specialty+%2F+Gourmet+Pizzas" className="hover:text-primary transition-colors">
-                  White Truffle & Burrata
+                <Link href="/menu?category=Specialty+%2F+Gourmet+Pizzas" className="hover:text-[#1c1917] dark:hover:text-white transition-colors">
+                  Gourmet Truffle
                 </Link>
               </li>
               <li>
-                <Link href="/menu?category=Meat+Lovers" className="hover:text-primary transition-colors">
-                  Diavola Spicy Soppressata
-                </Link>
-              </li>
-              <li>
-                <Link href="/menu?category=Vegetarian+Pizzas" className="hover:text-primary transition-colors">
-                  Heirloom Garden & Vegan
+                <Link href="/menu?category=Meat+Lovers" className="hover:text-[#1c1917] dark:hover:text-white transition-colors">
+                  Sourdough Specials
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Col 2: For Kitchens */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-foreground">
+          {/* Column 3: For Kitchens */}
+          <div className="space-y-3.5">
+            <h4 className="text-sm font-bold tracking-wide text-orange-600 dark:text-orange-400">
               For Kitchens
             </h4>
-            <ul className="space-y-2 text-xs text-muted-foreground">
+            <ul className="space-y-2.5 text-xs text-[#57534e] dark:text-neutral-400">
               <li>
-                <Link href="/sign-up?role=vendor" className="hover:text-primary transition-colors">
+                <Link href="/sign-up?role=vendor" className="hover:text-[#1c1917] dark:hover:text-white transition-colors">
                   Partner with PizzaHub
                 </Link>
               </li>
               <li>
-                <Link href="/dashboard/vendor/plan" className="hover:text-primary transition-colors">
-                  Vendor Premium Plan
+                <Link href="/dashboard/vendor" className="hover:text-[#1c1917] dark:hover:text-white transition-colors">
+                  Vendor Dashboard
                 </Link>
               </li>
               <li>
-                <Link href="/dashboard/vendor" className="hover:text-primary transition-colors">
-                  Live Kitchen Console
-                </Link>
-              </li>
-              <li>
-                <Link href="/dashboard/vendor/orders" className="hover:text-primary transition-colors">
-                  Order Dispatch Queue
-                </Link>
-              </li>
-              <li>
-                <Link href="/dashboard/vendor/menu" className="hover:text-primary transition-colors">
-                  Artisanal Recipe Studio
+                <Link href="/dashboard/vendor/plan" className="hover:text-[#1c1917] dark:hover:text-white transition-colors">
+                  Pricing & Plans
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Col 3: Customer Experience */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-foreground">
-              Customer Hub
+          {/* Column 4: Customer Care */}
+          <div className="space-y-3.5">
+            <h4 className="text-sm font-bold tracking-wide text-orange-600 dark:text-orange-400">
+              Customer Care
             </h4>
-            <ul className="space-y-2 text-xs text-muted-foreground">
+            <ul className="space-y-2.5 text-xs text-[#57534e] dark:text-neutral-400">
               <li>
-                <Link href="/dashboard/customer/orders" className="hover:text-primary transition-colors">
-                  Track Live Orders
+                <Link href="/dashboard/customer/orders" className="hover:text-[#1c1917] dark:hover:text-white transition-colors">
+                  Order Tracking
                 </Link>
               </li>
               <li>
-                <Link href="/dashboard/customer" className="hover:text-primary transition-colors">
-                  Customer Dashboard
+                <Link href="/dashboard/customer" className="hover:text-[#1c1917] dark:hover:text-white transition-colors">
+                  Support & FAQ
                 </Link>
               </li>
               <li>
-                <Link href="/menu" className="hover:text-primary transition-colors">
-                  Fast Neighborhood Delivery
-                </Link>
-              </li>
-              <li>
-                <Link href="/menu" className="hover:text-primary transition-colors">
-                  Catering & Group Boxes
-                </Link>
-              </li>
-              <li>
-                <Link href="/menu" className="hover:text-primary transition-colors">
-                  Pizza Lover Gift Cards
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Col 4: Platform & Trust */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-foreground">
-              Platform & Trust
-            </h4>
-            <ul className="space-y-2 text-xs text-muted-foreground">
-              <li>
-                <Link href="/" className="hover:text-primary transition-colors">
-                  Sourdough Quality Standard
-                </Link>
-              </li>
-              <li>
-                <Link href="/" className="hover:text-primary transition-colors">
-                  Cold-Ferment Science
-                </Link>
-              </li>
-              <li>
-                <Link href="/" className="hover:text-primary transition-colors">
-                  Stripe Payment Security
-                </Link>
-              </li>
-              <li>
-                <Link href="/" className="hover:text-primary transition-colors">
-                  Allergen & Gluten Matrix
-                </Link>
-              </li>
-              <li>
-                <a href="mailto:support@pizzahub.local" className="hover:text-primary transition-colors">
-                  Dispatch Support: 24/7
+                <a href="mailto:support@pizzahub.local" className="hover:text-[#1c1917] dark:hover:text-white transition-colors">
+                  Live Chat
                 </a>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom Legal & Payment Badges Bar */}
-        <div suppressHydrationWarning className="mt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
-          <p suppressHydrationWarning className="text-center md:text-left">
-            © {new Date().getFullYear()} PizzaHub Inc. All rights reserved. Handcrafted with passion & organic flour.
+        {/* Bottom Sub-Footer Bar: Right-aligned when cart is empty, centered when cart has items */}
+        <div
+          suppressHydrationWarning
+          className={`mt-8 relative flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#78716c] dark:text-neutral-400 ${
+            hasItems ? "pb-24 md:pb-4" : "pb-12 md:pb-4"
+          }`}
+        >
+          {/* Left: Copyright */}
+          <p suppressHydrationWarning className="text-center md:text-left text-xs order-2 md:order-1">
+            © {new Date().getFullYear()} PizzaHub Inc. All rights reserved.
           </p>
 
-          {/* Payment Trust Indicators */}
-          <div className="flex items-center gap-3">
-            <span className="text-[11px] font-medium text-muted-foreground hidden sm:inline">
-              Secured by:
-            </span>
-            <div className="flex items-center gap-2 text-foreground/80 font-bold text-[10px]">
-              <span className="px-2 py-0.5 rounded border border-border bg-card/80 font-mono tracking-tight">
-                STRIPE
-              </span>
-              <span className="px-2 py-0.5 rounded border border-border bg-card/80 font-sans tracking-tight">
-                VISA
-              </span>
-              <span className="px-2 py-0.5 rounded border border-border bg-card/80 font-sans tracking-tight">
-                MASTERCARD
-              </span>
-              <span className="px-2 py-0.5 rounded border border-border bg-card/80 font-sans tracking-tight">
-                APPLE PAY
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-5">
-            <Link href="/" className="hover:text-foreground transition-colors">
+          {/* Legal Links: Right-aligned by default, smoothly centered when cart is active */}
+          <div
+            className={`flex items-center gap-3 text-xs font-medium text-[#78716c] dark:text-neutral-400 order-1 md:order-2 transition-all duration-300 ease-out ${
+              hasItems
+                ? "md:absolute md:left-1/2 md:-translate-x-1/2"
+                : "md:ml-auto"
+            }`}
+          >
+            <Link href="/menu" className="hover:text-[#1c1917] dark:hover:text-white transition-colors">
               Privacy Policy
             </Link>
-            <Link href="/" className="hover:text-foreground transition-colors">
+            <span className="text-[#a8a29e] dark:text-neutral-600 select-none" aria-hidden="true">·</span>
+            <Link href="/menu" className="hover:text-[#1c1917] dark:hover:text-white transition-colors">
               Terms of Service
             </Link>
-            <Link href="/" className="hover:text-foreground transition-colors">
-              Cookie Settings
-            </Link>
           </div>
+
+          {/* Right: Reserved empty clearance space for sticky floating cart when active */}
+          {hasItems && (
+            <div className="hidden md:block w-36 order-3 pointer-events-none" aria-hidden="true" />
+          )}
         </div>
       </div>
     </footer>

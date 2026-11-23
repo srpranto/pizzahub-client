@@ -4,7 +4,7 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ShoppingBag, AlertCircle } from "lucide-react";
+import { ShoppingBag, AlertCircle, Check } from "lucide-react";
 import { toast } from "sonner";
 import { orderSchema, type OrderInput } from "@/lib/schemas";
 import { apiFetch } from "@/lib/api";
@@ -33,6 +33,14 @@ export function OrderForm({ item }: OrderFormProps) {
   const { data: session } = useSession();
   const { addItem } = useCart();
   const [loading, setLoading] = React.useState(false);
+  const [isAdded, setIsAdded] = React.useState(false);
+  const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  React.useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -179,18 +187,37 @@ export function OrderForm({ item }: OrderFormProps) {
             <div className="flex flex-col gap-2.5">
               <Button
                 type="button"
-                variant="outline"
+                variant={isAdded ? "default" : "outline"}
                 size="lg"
                 disabled={loading || Boolean(isOwner)}
                 onClick={() => {
                   const values = form.getValues();
                   addItem(item, 1, values.message);
+                  setIsAdded(true);
+                  if (timeoutRef.current) clearTimeout(timeoutRef.current);
+                  timeoutRef.current = setTimeout(() => {
+                    setIsAdded(false);
+                  }, 1200);
                   toast.success(`🍕 Added "${item.itemName}" to your pizza box!`);
                 }}
-                className="w-full h-11 text-sm font-bold border-primary/40 hover:bg-primary/10 hover:text-primary active:scale-[0.98]"
+                className={`w-full h-11 text-sm font-bold transition-all duration-200 cursor-pointer active:scale-95 ${
+                  isAdded
+                    ? "bg-emerald-600 hover:bg-emerald-600 text-white border-emerald-600 shadow-xs"
+                    : "border-primary/40 hover:bg-primary/10 hover:text-primary"
+                }`}
+                aria-label={isAdded ? `Added ${item.itemName} to box` : `Add ${item.itemName} to box`}
               >
-                <ShoppingBag className="mr-2 h-4 w-4 text-primary" />
-                Add to Pizza Box (Cart)
+                {isAdded ? (
+                  <>
+                    <Check className="mr-2 h-4 w-4 text-white stroke-[3] animate-in zoom-in-75 duration-200" />
+                    <span>Added to Pizza Box! ✓</span>
+                  </>
+                ) : (
+                  <>
+                    <ShoppingBag className="mr-2 h-4 w-4 text-primary" />
+                    <span>Add to Pizza Box (Cart)</span>
+                  </>
+                )}
               </Button>
 
               <HoldToConfirm

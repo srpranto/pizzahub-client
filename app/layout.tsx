@@ -55,7 +55,7 @@ if(typeof window!=="undefined"){(function(){try{var blocked=new Set(["bis_skin_c
         <Footer />
         <CartSheet />
         <FloatingCart />
-        <Toaster richColors position="bottom-right" />
+        <Toaster richColors position="top-right" closeButton />
       </body>
     </html>
   );

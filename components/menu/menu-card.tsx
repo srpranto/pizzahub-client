@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin, Sparkles, ShoppingBag } from "lucide-react";
+import { MapPin, Sparkles, ShoppingBag, Check } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,14 @@ interface MenuCardProps {
 
 export function MenuCard({ item, initialFavorite = false }: MenuCardProps) {
   const { addItem } = useCart();
+  const [isAdded, setIsAdded] = React.useState(false);
+  const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  React.useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   const imageUrl =
     item.images && item.images.length > 0
@@ -30,12 +38,17 @@ export function MenuCard({ item, initialFavorite = false }: MenuCardProps) {
     e.preventDefault();
     e.stopPropagation();
     addItem(item, 1);
+    setIsAdded(true);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      setIsAdded(false);
+    }, 1200);
     toast.success(`🍕 Added "${item.itemName}" to your pizza box!`);
   };
 
   return (
     <div
-      className="group flex flex-col justify-between overflow-hidden rounded-xl sm:rounded-2xl border border-border/80 bg-card shadow-xs transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ring-1 ring-black/5 dark:ring-white/10 w-full min-w-0 max-w-full h-full"
+      className="group flex flex-col justify-between overflow-hidden rounded-xl sm:rounded-2xl border border-border/80 bg-card shadow-xs transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-primary/50 hover:shadow-primary/5 ring-1 ring-black/5 dark:ring-white/10 w-full min-w-0 max-w-full h-full"
     >
       <div className="flex flex-col flex-1">
         <div className="relative aspect-4/3 w-full overflow-hidden bg-muted shrink-0">
@@ -109,15 +122,29 @@ export function MenuCard({ item, initialFavorite = false }: MenuCardProps) {
         <Button
           type="button"
           onClick={handleAddToCart}
-          className="flex-1 h-8 sm:h-11 px-1.5 sm:px-4 text-[11px] sm:text-sm font-bold group/btn active:scale-[0.98]"
+          className={`flex-1 h-10 sm:h-11 min-h-[40px] sm:min-h-[44px] px-2 sm:px-4 text-xs sm:text-sm font-bold group/btn active:scale-95 transition-all duration-200 cursor-pointer ${
+            isAdded
+              ? "bg-emerald-600 hover:bg-emerald-600 text-white shadow-emerald-500/20"
+              : "bg-primary text-primary-foreground hover:bg-primary/90"
+          }`}
+          aria-label={isAdded ? `Added ${item.itemName} to box` : `Add ${item.itemName} to box`}
         >
-          <ShoppingBag className="mr-1 sm:mr-1.5 h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 transition-transform group-hover/btn:scale-110" />
-          <span className="truncate">Add<span className="hidden min-[380px]:inline"> to Box</span></span>
+          {isAdded ? (
+            <>
+              <Check className="mr-1 sm:mr-1.5 h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 animate-in zoom-in-75 duration-200 stroke-[3]" />
+              <span className="truncate">Added! ✓</span>
+            </>
+          ) : (
+            <>
+              <ShoppingBag className="mr-1 sm:mr-1.5 h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 transition-transform group-hover/btn:scale-110" />
+              <span className="truncate">Add<span className="hidden min-[380px]:inline"> to Box</span></span>
+            </>
+          )}
         </Button>
         <Button
           asChild
           variant="outline"
-          className="h-8 sm:h-11 px-2 sm:px-3.5 text-[11px] sm:text-xs font-semibold shrink-0"
+          className="h-10 sm:h-11 min-h-[40px] sm:min-h-[44px] px-2.5 sm:px-3.5 text-xs sm:text-xs font-semibold shrink-0 cursor-pointer active:scale-95 transition-all"
           aria-label={`View details for ${item.itemName}`}
         >
           <Link href={`/menu/${item.id}`}>

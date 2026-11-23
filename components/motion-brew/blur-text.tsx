@@ -64,7 +64,7 @@ export const BlurText = React.forwardRef<HTMLElement, BlurTextProps>(function Bl
   const ref = React.useRef<HTMLElement>(null);
   React.useImperativeHandle(forwardedRef, () => ref.current as HTMLElement);
 
-  const seen = useInView(ref, { once: true, amount: 0.4 });
+  const seen = useInView(ref, { once: true, amount: 0.1 });
   const inView = trigger === "mount" || seen;
   const pieces = by === "word" ? text.split(" ") : Array.from(text);
   const offset = direction === "up" ? "0.35em" : "-0.35em";
